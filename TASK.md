@@ -1,6 +1,6 @@
 # File Manager
 
-[] - Open/ Create database file
+[] - Open/ Create/ close database file
 [] - Read bytes from file
 [] - Write bytes to file
 [] - Flush changes to disk 
