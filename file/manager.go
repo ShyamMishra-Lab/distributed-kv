@@ -10,14 +10,15 @@ type FileManager struct {
 }
 
 // only initializes the manager, doesn't open the file
+// takes path of the *os.file
 func NewFileManager(path string) *FileManager {
-	return  &FileManager{
+	return &FileManager{
 		path: path,
 	}
 }
 
 // Open: check if file already open -> yes, return error -> no, open file for path -> save file pointer to file manager -> Return success
-// 
+//
 // opens the managed file for read and write, error if file already open, or doesn't open
 func (fm *FileManager) Open() error {
 	if fm.file != nil {
@@ -42,7 +43,7 @@ func (fm *FileManager) Close() error {
 	}
 
 	err := fm.file.Close()
-	
+
 	// the handle is no longer usable
 	fm.file = nil
 	return err
