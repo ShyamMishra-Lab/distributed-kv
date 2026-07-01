@@ -1,27 +1,74 @@
 package file
 
 import (
-
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
 )
 
-func TestOpenExistingFile(t *testing.T) {
-	//Arrange
+//Helper functions
+func newTestFileManager(t *testing.T) *FileManager {
 	dir := t.TempDir()
 	dbPath := filepath.Join(dir, "test.db")
-	f, err := os.Create(dbPath)
+	f, err := os.Create((dbPath))
 	if err != nil {
-		t.Fatalf("Error on file creation: %v", err)
+		t.Fatalf("error on file creation: %v", err)
 	}
-	
 	if err := f.Close(); err != nil {
-		t.Fatalf("failed to close temporary file: %v", err)
+		t.Fatalf("file closed, error reported: %v", err)
+	}
+	return NewFileManager(dbPath)
+}
+
+//Tests
+func TestOpenExistingFile(t *testing.T) {
+	//Arrange
+	// dir := t.TempDir()
+	// dbPath := filepath.Join(dir, "test.db")
+	// f, err := os.Create(dbPath)
+	// if err != nil {
+	// 	t.Fatalf("error on file creation: %v", err)
+	// }
+
+	// if err := f.Close(); err != nil {
+	// 	t.Fatalf("file closed, error reported: %v", err)
+	// }
+
+	// //Opening file manager
+	// fm := NewFileManager(dbPath)
+
+	fm := newTestFileManager(t)
+	//closing the file manager at last
+	//error if not close---The process cannot access the file because it is being used by another process.
+	//it comes as the file inside the temp dir is not closed while windows try to clear temp dir
+	defer func() {
+		if err := fm.Close(); err != nil && err != ErrFileNotOpen {
+			t.Fatalf("error on fm.Close: %v", err)
+		}
+	}()
+
+	//Act
+	err := fm.Open()
+
+	//Assert
+	if err != nil {
+		t.Fatalf("error on fm.Open: %v", err)
 	}
 
-	//Opening file manager
-	fm := NewFileManager(dbPath)
+	if fm.file == nil {
+		t.Fatalf("expected file handle to exist")
+	}
+}
+
+func TestOpenAlreadyOpenedFileReturnsError(t *testing.T) {
+	//Arrange
+	fm := newTestFileManager(t)
+
+	err := fm.Open()
+	if err != nil {
+		t.Fatalf("expected first open to work, got %v", err)
+	}
 	//closing the file manager at last
 	//error if not close---The process cannot access the file because it is being used by another process.
 	//it comes as the file inside the temp dir is not closed while windows try to clear temp dir
@@ -35,11 +82,58 @@ func TestOpenExistingFile(t *testing.T) {
 	err = fm.Open()
 
 	//Assert
-	if err != nil {
-		t.Fatalf("error on fm.Open: %v", err)
+	if !errors.Is(err, ErrFileAlreadyOpen) {
+		t.Fatalf("expected: %v, got: %v", ErrFileAlreadyOpen, err)
+	}
+}
+
+func TestCloseWithoutOpenReturnsError(t *testing.T) {
+	//Arrange
+	fm := newTestFileManager(t)
+
+	//Act
+
+	//Assertion
+	if err := fm.Close(); !errors.Is(err, ErrFileNotOpen) {
+		t.Fatalf("expected Close() to return ErrFileNotOpen, got: %v", err)
 	}
 
-	if fm.file == nil {
-		t.Fatalf("expected fm.file to be not nil")
+}
+
+func TestOpenClose(t *testing.T) {
+	//Arrange
+	fm := newTestFileManager(t)
+	//Act
+
+	//Assert
+	if err := fm.Open(); err != nil && !errors.Is(err, ErrFileAlreadyOpen) {
+		t.Fatalf("expected Open() to work, got: %v", err)
+	}
+	if err := fm.Close(); err != nil {
+		t.Fatalf("expected Close() to work, got: %v", err)
+	}
+}
+
+func TestOpenCloseOpen(t *testing.T) {
+	//Arrange
+	fm := newTestFileManager(t)
+
+	//Closing file at the end so it won't interfere with the cleaning of TempDir()
+	defer func() {
+		if err := fm.Close(); err != nil && errors.Is(err, ErrFileNotOpen) {
+			t.Fatalf("file closed, error reported: %v", err)
+		}
+	}()
+	//Act
+
+	//Assert
+	if err := fm.Open(); err != nil && !errors.Is(err, ErrFileAlreadyOpen) {
+		t.Fatalf("expected Open() to work, got: %v", err)
+	}
+	if err := fm.Close(); err != nil {
+		t.Fatalf("expected Close() to work, got: %v", err)
+	}
+	if err := fm.Open(); err != nil {
+		t.Fatalf("expected Open() to reopen file, got: %v", err)
 	}
 }
