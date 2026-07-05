@@ -137,3 +137,47 @@ func TestOpenCloseOpen(t *testing.T) {
 		t.Fatalf("expected Open() to reopen file, got: %v", err)
 	}
 }
+
+// Tests Create
+func TestCreateNewFile(t *testing.T) {
+	//Arrange
+	dir := t.TempDir()
+	dbPath := filepath.Join(dir, "test.db")
+	fm := NewFileManager(dbPath)
+
+	//Closing file at the end of function so that the tempDir can be trashed
+	defer func() {
+		if err := fm.Close(); err != nil && err != ErrFileNotOpen {
+			t.Fatalf("error on fm.Close: %v", err)
+		}
+	}()
+
+	//Act/Assert
+	if err := fm.Create(); err != nil {
+		t.Fatalf("expected Create() to create and open file, got: %v", err)
+	}
+	if fm.file == nil {
+		t.Fatalf("expected file handle to exist")
+	}
+}
+
+func TestCreateExistingFileReturnsError(t *testing.T) {
+	//Arrange
+	//Creating and closing a file on path : dbPath
+	dir := os.TempDir()
+	dbPath := filepath.Join(dir, "test1.db")
+	f, err := os.Create(dbPath)
+	if err != nil {
+		t.Fatalf("error on file creation: %v", err)
+	}
+	if err := f.Close(); err != nil {
+		t.Fatalf("file closed, error reported: %v", err)
+	}
+
+	fm := NewFileManager(dbPath)
+
+	//Act/Assert
+	if err := fm.Create(); err != nil && !errors.Is(err, os.ErrExist) {
+		t.Fatalf("expected: %v, got: %v", os.ErrExist, err)
+	}
+}

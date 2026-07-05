@@ -48,3 +48,24 @@ func (fm *FileManager) Close() error {
 	fm.file = nil
 	return err
 }
+
+// Create: check if fm.file exists -> yes: return error ErrFileAlreadyOpen, -> no: Create file at path -> store file handle with flags: read/write return success
+func (fm *FileManager) Create() error {
+	if fm.file != nil {
+		return ErrFileAlreadyOpen
+	}
+	// creates and open file exclusively i.e. it will give error if file already exists
+	f, err := os.OpenFile(fm.path, os.O_CREATE|os.O_EXCL|os.O_RDWR, 0644)
+	if err != nil {
+		return err
+	}
+	// saves the file handle
+	fm.file = f
+	return nil
+}
+
+// OpenOrCreate: check if file exists -> yes: fm.Open() -> no:  fm.Open() -> return errors
+
+// func (fm *FileManager) OpenOrCreate() error {
+
+// }
