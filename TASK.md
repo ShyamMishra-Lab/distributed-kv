@@ -1,11 +1,12 @@
 # File Manager
 
-[] - Open/ Create/ close database file
-[] - Read bytes from file
-[] - Write bytes to file
-[] - Flush changes to disk 
+[*] - Open/ Create/ close database file
+[*] - Read bytes from file
+[*] - Write bytes to file
+[*] - Flush changes to disk 
 <!-- {I am thinking an exposed sync method instead of a hardcoded flush on every write} -->
-[] - Get current file size
+[*
+] - Get current file size
 [] - Unit testing and file error handling
 
 # Metadata

@@ -64,8 +64,46 @@ func (fm *FileManager) Create() error {
 	return nil
 }
 
-// OpenOrCreate: check if file exists -> yes: fm.Open() -> no:  fm.Open() -> return errors
+// // OpenOrCreate: check if file exists -> yes: fm.Open() -> no:  fm.Open() -> return errors
 
 // func (fm *FileManager) OpenOrCreate() error {
-
+// 	if err := fm.Create(); err != nil && errors.Is(err, os.ErrExist) {
+// 		if err := fm.Open(); err != nil && !errors.Is(err, ErrFileAlreadyOpen) {
+// 			return err
+// 		}
+// 	}
+// 	return nil
 // }
+
+func (fm *FileManager) ReadAt(buf []byte, offset int64) (int, error) {
+	if fm.file == nil {
+		return 0, ErrFileNotOpen
+	}
+	return fm.file.ReadAt(buf, offset)
+}
+
+func (fm *FileManager) WriteAt(buf []byte, offset int64) (int, error) {
+	if fm.file == nil {
+		return 0, ErrFileNotOpen
+	}
+	return fm.file.WriteAt(buf, offset)
+}
+
+func (fm *FileManager) Sync() error {
+	if fm.file == nil {
+		return ErrFileNotOpen
+	}
+	return fm.file.Sync()
+}
+
+// Size needs file Info/ name provided by Stat()
+func (fm *FileManager) Size() (int64, error) {
+	if fm.file == nil {
+		return 0, ErrFileNotOpen
+	}
+	info, err := fm.file.Stat()
+	if err != nil {
+		return 0, err
+	}
+	return info.Size(), nil
+}

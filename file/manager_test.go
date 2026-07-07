@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-//Helper functions
+// Helper functions
 func newTestFileManager(t *testing.T) *FileManager {
 	dir := t.TempDir()
 	dbPath := filepath.Join(dir, "test.db")
@@ -21,7 +21,7 @@ func newTestFileManager(t *testing.T) *FileManager {
 	return NewFileManager(dbPath)
 }
 
-//Tests
+// Tests
 func TestOpenExistingFile(t *testing.T) {
 	//Arrange
 	// dir := t.TempDir()
@@ -181,3 +181,5 @@ func TestCreateExistingFileReturnsError(t *testing.T) {
 		t.Fatalf("expected: %v, got: %v", os.ErrExist, err)
 	}
 }
+
+//Test ReadAt()
