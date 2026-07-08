@@ -6,6 +6,4 @@ type Page struct {
 	Dirty bool
 }
 
-func NewPage(p *Page) *Page {
-	return &Page{}
-}
+

@@ -1,8 +1,6 @@
 package pager
 
 import (
-	"go/constant"
-
 	"github.com/iips-oss/distributed-kv/file"
 )
 
@@ -12,7 +10,7 @@ type Pager struct {
 }
 
 func NewPager(fm *file.FileManager, pageSize int) (*Pager, error) {
-	if pageSize < 0 {
+	if pageSize <= 0 {
 		return nil, ErrInvalidPageSize
 	}
 	return &Pager{
