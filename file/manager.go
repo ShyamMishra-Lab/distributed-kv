@@ -75,18 +75,20 @@ func (fm *FileManager) Create() error {
 // 	return nil
 // }
 
-func (fm *FileManager) ReadAt(buf []byte, offset int64) (int, error) {
+func (fm *FileManager) ReadAt(buf []byte, offset int64) error {
 	if fm.file == nil {
-		return 0, ErrFileNotOpen
+		return ErrFileNotOpen
 	}
-	return fm.file.ReadAt(buf, offset)
+	_, err := fm.file.ReadAt(buf, offset)
+	return err
 }
 
-func (fm *FileManager) WriteAt(buf []byte, offset int64) (int, error) {
+func (fm *FileManager) WriteAt(buf []byte, offset int64) error {
 	if fm.file == nil {
-		return 0, ErrFileNotOpen
+		return ErrFileNotOpen
 	}
-	return fm.file.WriteAt(buf, offset)
+	_, err := fm.file.WriteAt(buf, offset)
+	return err
 }
 
 func (fm *FileManager) Sync() error {
