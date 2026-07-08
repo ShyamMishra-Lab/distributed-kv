@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"errors"
 	"testing"
 )
 
@@ -55,4 +56,22 @@ func TestEncodeDecode(t *testing.T) {
 		t.Fatal("error")
 	}
 
+}
+
+func TestDecodeInvalidMagicNumber(t *testing.T) {
+	//Arrange
+	original := NewMetadata(4096)
+
+	//Act
+	//Encode original
+	data, _ := original.Encode()
+	//corrupt data
+	data[0] = 'S'
+	//Decode original
+	_, err := Decode(data)
+
+	//Assert
+	if !errors.Is(err, ErrInvalidMagicNumber) {
+		t.Fatal(ErrInvalidMagicNumber)
+	}
 }

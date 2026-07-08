@@ -8,12 +8,12 @@ type Metadata struct {
 	NextFreePage uint64
 }
 
-//Constants
+// Constants
 var MagicNumber = [4]byte{'D', 'K', 'V', '1'}
 
 const CurrentVersion uint32 = 1
 
-//Constructors
+// Constructors
 func NewMetadata(pageSize uint32) *Metadata {
 	return &Metadata{
 		Magic:        MagicNumber,

@@ -7,7 +7,7 @@ import (
 
 var byteOrder = binary.LittleEndian
 
-//Create a buffer -> write data -> return bytes
+// Create a buffer -> write data -> return bytes
 func (m *Metadata) Encode() ([]byte, error) {
 	var buf bytes.Buffer
 	if err := binary.Write(&buf, byteOrder, m.Magic); err != nil {
@@ -28,7 +28,7 @@ func (m *Metadata) Encode() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-//create metaddata -> read -> return metadata
+// create metaddata -> read -> return metadata
 func Decode(data []byte) (*Metadata, error) {
 	reader := bytes.NewReader(data)
 	m := &Metadata{}
