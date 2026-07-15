@@ -109,3 +109,5 @@ func (fm *FileManager) Size() (int64, error) {
 	}
 	return info.Size(), nil
 }
+
+
