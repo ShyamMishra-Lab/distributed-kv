@@ -33,7 +33,7 @@ Persistent state on all servers
 --------------------------------
 currentTerm
 votedFor
-log[]
+log[] --- ours will be handled by log manager
 
 Volatile state on all servers
 -----------------------------
@@ -61,3 +61,13 @@ Responsible for Leader Election
 ### Heartbeat Manager
 
 Responsible for randomized timer ticks to keep leader alive and followers active
+
+## Log Manager
+
+Contains Log Entry it's related methods and functions and also handles persistant log storage
+
+### Log Entry
+
+Term    |   Log Index   | Command
+---------------------------------
+8 bytes |   8 bytes     | []byte
