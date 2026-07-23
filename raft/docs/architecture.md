@@ -66,6 +66,27 @@ Responsible for randomized timer ticks to keep leader alive and followers active
 
 Contains Log Entry it's related methods and functions and also handles persistant log storage
 
+### Methods
+
+#### RulesforServers
+
+- Append(entry) ---Ifcommandreceivedfromclient:appendentrytolocallog, respondafterentryappliedtostatemachine(§5.3)
+
+#### AppendEntriesRPC
+
+- AppendEntries(entries) ---Appendanynewentriesnotalreadyinthelog
+- DeleteFrom(index) ---Ifanexistingentryconflictswithanewone(sameindex butdifferentterms),deletetheexistingentryandallthat followit(§5.3)
+- Get(index) ---Ifanexistingentryconflictswithanewone(sameindex butdifferentterms),deletetheexistingentryandallthat followit(§5.3)
+
+#### RequestVoteRPC
+
+- LastIndex
+- LastTerm
+
+Entries() ---for multiple entries
+IsUpToDate() ---log matching
+
+
 ### Log Entry
 
 Term    |   Log Index   | Command
